@@ -1,7 +1,7 @@
-import { Lexador, LexadorPitugues } from "@designliquido/delegua/lexador";
-import { AvaliadorSintatico, AvaliadorSintaticoPitugues } from "@designliquido/delegua/avaliador-sintatico";
+import { LexadorPitugues } from "@designliquido/delegua/lexador";
+import { AvaliadorSintaticoPitugues } from "@designliquido/delegua/avaliador-sintatico";
 import { AnalisadorSemantico } from "@designliquido/delegua/analisador-semantico";
-import { Interpretador } from "@designliquido/delegua/interpretador";
+import { InterpretadorPitugues } from "@designliquido/delegua/interpretador/dialetos/pitugues";
 
 import {
     AvaliadorSintaticoInterface,
@@ -32,7 +32,7 @@ export class PituguesWeb {
     teveErroEmTempoDeExecucao: boolean = false;
 
     dialeto: string = "pitugues";
-    interpretador: Interpretador;
+    interpretador: InterpretadorPitugues;
     lexador: LexadorInterface<SimboloInterface>;
     avaliadorSintatico: AvaliadorSintaticoInterface<SimboloInterface, Declaracao>;
     analisadorSemantico: AnalisadorSemantico;
