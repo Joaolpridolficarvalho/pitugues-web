@@ -21,6 +21,7 @@ const mostrarResultadoExecutar = function (codigo: string) {
     paragrafo.classList = " resultadoEditor";
     resultadoEditorDiv?.appendChild(paragrafo);
 };
+const pituguesWeb = new Pitugues.PituguesWeb("", mostrarResultadoExecutar);
 
 const pituguesWeb = new Pitugues.PituguesWeb("", mostrarResultadoExecutar);
 const limparResultadoEditor = function () {
@@ -563,8 +564,8 @@ const informacoesModulos = {
 };
 
 const configurarLinguagemPitugues = function () {
+    const primitivas = (globalThis as any).primitivas;
     const documentacoesBibliotecas = pituguesWeb.documentacoesBibliotecas;
-    const primitivas: IPrimitiva[] = (globalThis as any).primitivas;
 
     Monaco.languages.register({ id: 'pitugues',
         extensions: ['.pitu'],
@@ -705,6 +706,45 @@ const configurarLinguagemPitugues = function () {
     });
 
 
+    Monaco.languages.registerCompletionItemProvider('pitugues', {
+        triggerCharacters: ['.'],
+        provideCompletionItems: (model, position) => {
+            const linha = model.getLineContent(position.lineNumber);
+            const textoAntesCursor = linha.substring(0, position.column - 1);
+            
+            // Verificar se estamos após um ponto (ex: criptografia.)
+            const matchBiblioteca = textoAntesCursor.match(/(\w+)\.(\w*)$/);
+            
+            if (matchBiblioteca) {
+                const nomeBiblioteca = matchBiblioteca[1];
+                const documentacaoBiblioteca = documentacoesBibliotecas[nomeBiblioteca];
+                
+                if (documentacaoBiblioteca) {
+                    const sugestoesMetodos = Object.keys(documentacaoBiblioteca).map(nomeMetodo => {
+                        const metodo = documentacaoBiblioteca[nomeMetodo];
+                        const argumentos = metodo.argumentos || [];
+                        const argsTexto = argumentos
+                            .map((arg, index) => {
+                                const placeholder = `\${${index + 1}:${arg.nome}}`;
+                                return arg.opcional ? placeholder : placeholder;
+                            })
+                            .join(', ');
+                        
+                        return {
+                            label: nomeMetodo,
+                            kind: 1, // Method
+                            insertText: `${nomeMetodo}(${argsTexto})`,
+                            insertTextRules: 4, // InsertAsSnippet
+                            documentation: metodo.documentacao || '',
+                            detail: metodo.tipoRetorno ? `→ ${metodo.tipoRetorno}` : ''
+                        };
+                    });
+                    
+                    return { suggestions: sugestoesMetodos };
+                }
+            }
+        }
+    });
     Monaco.languages.registerCompletionItemProvider('pitugues', {
         provideCompletionItems: () => {
             const formatoPrimitivas = primitivas.filter(p => p.exemploCodigo).map(({ nome, exemploCodigo: exemplo }) => {
