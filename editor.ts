@@ -563,7 +563,7 @@ const informacoesModulos = {
 };
 
 const configurarLinguagemPitugues = function () {
-    const primitivas = (globalThis as any).primitivas;
+    const primitivas: IPrimitiva[] = (globalThis as any).primitivas;
     const documentacoesBibliotecas = pituguesWeb.documentacoesBibliotecas;
 
     Monaco.languages.register({ id: 'pitugues',
