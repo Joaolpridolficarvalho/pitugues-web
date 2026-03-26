@@ -2,8 +2,8 @@ const CODE_SNIPPETS = [
     {
 		prefixo: "para",
 		corpo: [
-			"para var ${1:i} = 0; ${1:i} < 5; ${1:i} = ${1:i} + 1",
-			"\tescreva(${1:i})"
+			"para cada ${1:i} em intervalo(${2:0}, ${3:5}):",
+			"\t ${4:Código}"
 		],
 		descricao: "Laço de repetição \"para\""
 	},
